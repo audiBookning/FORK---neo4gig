@@ -1,4 +1,3 @@
-import { MailerModule } from '@nest-modules/mailer';
 import { Module } from '@nestjs/common';
 // import { ConfigModule } from './modules/config/config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,8 +10,20 @@ import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(),
-    MailerModule.forRoot(),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      username: 'postgres',
+      password: 'postgres',
+      database: 'neo4gig',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+
+      migrations: ['__dirname/db/postgresql/migrations/*.ts'],
+      cli: {
+        migrationsDir: '__dirname/db/postgresql/migrations',
+      },
+    }),
     Neo4jModule,
     UsersModule,
     GenresModule,

@@ -1,4 +1,4 @@
-import { MailerProvider } from '@nest-modules/mailer';
+import { MailerService } from '@nest-modules/mailer';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
@@ -18,6 +18,8 @@ import { IResetPassword } from './interfaces/auth-reset-password.interface';
 import { IAuthResponse } from './interfaces/auth-response.interface';
 import { IAuthService } from './interfaces/auth-service.interface';
 
+const emailTemplatesDir = __dirname + '/src/common/email-templates/';
+
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
@@ -25,8 +27,7 @@ export class AuthService implements IAuthService {
     private readonly passwordRecoveryRepository: Repository<PasswordRecovery>,
     @Inject('UsersNeoService')
     private readonly usersNeoService: UsersNeoService,
-    @Inject('MailerProvider')
-    private readonly mailerProvider: MailerProvider,
+    private readonly mailerService: MailerService,
     private readonly usersService: UsersService, // private readonly configService: ConfigService,
   ) {}
 
@@ -105,11 +106,11 @@ export class AuthService implements IAuthService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
 
-    await this.mailerProvider.sendMail({
+    await this.mailerService.sendMail({
       to: `${user.email}`,
       from: 'noreply@neo4gig.com',
       subject: 'Welcome ✔',
-      template: 'welcome',
+      template: emailTemplatesDir + 'welcome',
       context: {
         username: `${credentials.name}`,
       },
@@ -134,11 +135,11 @@ export class AuthService implements IAuthService {
 
     await this.passwordRecoveryRepository.save(passwordRecovery);
 
-    await this.mailerProvider.sendMail({
+    await this.mailerService.sendMail({
       to: `${user.email}`,
       from: 'noreply@neo4gig.com',
       subject: 'Password recovery',
-      template: 'password-recovery',
+      template: emailTemplatesDir + 'password-recovery',
       context: {
         // link: `${this.configService.get('FRONTEND')}/reset-password/${token}`,
       },

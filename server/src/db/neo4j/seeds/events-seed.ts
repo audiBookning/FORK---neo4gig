@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import * as faker from 'faker';
+// TODO: change moment to a lighter package like date-fns
 import * as moment from 'moment';
 import * as stringifyObject from 'stringify-object';
 

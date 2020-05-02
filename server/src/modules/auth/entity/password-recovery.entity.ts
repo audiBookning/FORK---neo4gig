@@ -21,7 +21,10 @@ export class PasswordRecovery {
   @Column()
   token: string;
 
-  @ManyToOne(type => User, user => user.passwordRecoveries)
+  @ManyToOne(
+    type => User,
+    user => user.passwordRecoveries,
+  )
   user: User;
 
   @CreateDateColumn({ type: 'timestamp' })
