@@ -1,10 +1,9 @@
-import { IsString, IsDateString } from 'class-validator';
+import { IsDateString, IsString } from 'class-validator';
 
 export class CreateEventNeoDto {
+  @IsString()
+  readonly city: string;
 
-    @IsString()
-    readonly city: string;
-
-    @IsDateString()
-    readonly dateAndTime: string;
+  @IsDateString()
+  readonly dateAndTime: string;
 }

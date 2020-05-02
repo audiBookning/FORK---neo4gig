@@ -1,6 +1,7 @@
-import {v1} from 'neo4j-driver';
+import { auth, driver } from 'neo4j-driver';
 
 export const Neo4jProvider = {
-    provide: 'Neo4jProvider',
-    useFactory: () => v1.driver('bolt://neo4j', v1.auth.basic('neo4j', 'neo4gig')),
+  provide: 'Neo4jProvider',
+  useFactory: () =>
+    driver('bolt://localhost:7687', auth.basic('neo4j', 'nova55dggYYh')),
 };

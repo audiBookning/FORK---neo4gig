@@ -1,6 +1,5 @@
-
 export enum RelationshipSide {
-    FromMe = '->',
-    ToMe = '<-',
-    Neutral = '-',
+  FromMe = '->',
+  ToMe = '<-',
+  Neutral = '-',
 }

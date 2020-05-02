@@ -1,16 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import * as dotenv from 'dotenv';
-import * as fs from 'fs';
 
 @Injectable()
 export class ConfigService {
-    private readonly envConfig: { [key: string]: string };
+  private readonly envConfig: { [key: string]: string };
 
-    constructor(filePath: string) {
-        this.envConfig = dotenv.parse(fs.readFileSync(filePath));
-    }
+  constructor(filePath: string) {
+    // this.envConfig = dotenv.parse(fs.readFileSync(filePath));
 
-    get(key: string): string {
-        return this.envConfig[key];
-    }
+    this.envConfig = {
+      PORT: '3000',
+      JWTID: 'secret',
+      EXPIRATION_TIME: '6',
+      FRONTEND: 'http://localhost:1234',
+      API: 'http://localhost:3000',
+    };
+  }
+
+  get(key: string): string {
+    return this.envConfig[key];
+  }
 }
