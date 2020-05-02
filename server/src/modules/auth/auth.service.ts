@@ -6,12 +6,12 @@ import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
-import { User } from '../users/entity/user.entity';
-import { User as NeoUser } from '../users/entity/user.neo.entity';
+import { NeoUser } from '../users/entity/user.neo.entity';
+import { SqlUser } from '../users/entity/user.sql.entity';
 import { Status } from '../users/enum/status.enum';
 import { UsersNeoService } from '../users/users.neo.service';
 import { UsersService } from '../users/users.service';
-import { PasswordRecovery } from './entity/password-recovery.entity';
+import { PasswordRecovery } from './entity/password-recovery.sql.entity';
 import { IJwtOptions } from './interfaces/auth-jwt-options.interface';
 // import {ConfigService} from '../config/config.service';
 import { IResetPassword } from './interfaces/auth-reset-password.interface';
@@ -188,7 +188,7 @@ export class AuthService implements IAuthService {
 
     const { user } = passwordRecovery;
 
-    const updatedUser: User = {
+    const updatedUser: SqlUser = {
       ...user,
       password: crypto.createHmac('sha256', password).digest('hex'),
     };
@@ -199,7 +199,7 @@ export class AuthService implements IAuthService {
   public async confirmToken(registerToken: string): Promise<void> {
     const user = await this.usersService.findOne({ where: { registerToken } });
 
-    const updatedUser: User = {
+    const updatedUser: SqlUser = {
       ...user,
       registerToken: null,
       status: Status.Active,

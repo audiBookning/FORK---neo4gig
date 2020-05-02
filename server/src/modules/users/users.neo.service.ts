@@ -1,13 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateUserNeoDto } from './dto/createUser.neo.dto';
-import { User } from './entity/user.neo.entity';
-import { IUsersNeoService } from './interfaces/users-service.neo.interface';
-import { Genre } from '../genres/entity/genre.neo.entity';
-import { Event } from '../events/entity/event.neo.entity';
-import { RelationshipSide } from '../../common/enum/neo-relationship-side.enum';
-import { QueryWith } from '../../common/entity/neo-query-with';
 import * as moment from 'moment';
+import { RelationshipSide } from '../../common/enum/neo-relationship-side.enum';
 import { Band } from '../bands/entity/band.neo.entity';
+import { Event } from '../events/entity/event.neo.entity';
+import { Genre } from '../genres/entity/genre.neo.entity';
+import { CreateUserNeoDto } from './dto/createUser.neo.dto';
+import { NeoUser } from './entity/user.neo.entity';
+import { IUsersNeoService } from './interfaces/users-service.neo.interface';
 
 @Injectable()
 export class UsersNeoService implements IUsersNeoService {
@@ -15,47 +14,53 @@ export class UsersNeoService implements IUsersNeoService {
     @Inject('UsersNeoRepository') private readonly usersNeoRepository,
   ) {}
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<NeoUser[]> {
     return await this.usersNeoRepository.find();
   }
 
-  async findById(id: string): Promise<User> {
+  async findById(id: string): Promise<NeoUser> {
     return await this.usersNeoRepository.findById(id);
   }
 
-  async findOne(query: object): Promise<User> {
+  async findOne(query: object): Promise<NeoUser> {
     return await this.usersNeoRepository.findOne(query);
   }
 
-  async find(query: object): Promise<User[]> {
+  async find(query: object): Promise<NeoUser[]> {
     return await this.usersNeoRepository.find(query);
   }
 
-  async create(createUserNeoDto: CreateUserNeoDto): Promise<User> {
+  async create(createUserNeoDto: CreateUserNeoDto): Promise<NeoUser> {
     return await this.usersNeoRepository.save(createUserNeoDto);
   }
 
-  async update(id: string, newValue: CreateUserNeoDto): Promise<User | null> {
+  async update(
+    id: string,
+    newValue: CreateUserNeoDto,
+  ): Promise<NeoUser | null> {
     return await this.usersNeoRepository.update({ ...newValue, id });
   }
 
-  async findWithOperator(query: object): Promise<User[]> {
+  async findWithOperator(query: object): Promise<NeoUser[]> {
     return await this.usersNeoRepository.findWithOperator(query);
   }
 
-  async followUser(currentUser: User, userToFollow: User): Promise<User> {
+  async followUser(
+    currentUser: NeoUser,
+    userToFollow: NeoUser,
+  ): Promise<NeoUser> {
     const currentUserId = currentUser.id;
     const userToFollowId = userToFollow.id;
 
     return await this.usersNeoRepository.createRelationship(
       currentUserId,
       userToFollowId,
-      User.entityName,
+      NeoUser.entityName,
     );
   }
 
   async followGenreById(
-    currentUser: User,
+    currentUser: NeoUser,
     genreToFollow: Genre,
   ): Promise<Genre> {
     const currentUserId = currentUser.id;
@@ -69,7 +74,7 @@ export class UsersNeoService implements IUsersNeoService {
   }
 
   async followGenreByName(
-    currentUser: User,
+    currentUser: NeoUser,
     genreToFollow: Genre,
   ): Promise<Genre> {
     const currentUserId = currentUser.id;
@@ -82,7 +87,10 @@ export class UsersNeoService implements IUsersNeoService {
     );
   }
 
-  async attendEvent(currentUser: User, eventToAttend: Event): Promise<Event> {
+  async attendEvent(
+    currentUser: NeoUser,
+    eventToAttend: Event,
+  ): Promise<Event> {
     const currentUserId = currentUser.id;
     const eventToAttendId = eventToAttend.id;
 
@@ -93,19 +101,22 @@ export class UsersNeoService implements IUsersNeoService {
     );
   }
 
-  async unfollowUser(currentUser: User, userToUnfollow: User): Promise<User> {
+  async unfollowUser(
+    currentUser: NeoUser,
+    userToUnfollow: NeoUser,
+  ): Promise<NeoUser> {
     const currentUserId = currentUser.id;
     const userToUnfollowId = userToUnfollow.id;
 
     return await this.usersNeoRepository.deleteRelationship(
       currentUserId,
       userToUnfollowId,
-      User.entityName,
+      NeoUser.entityName,
     );
   }
 
   async unfollowGenreById(
-    currentUser: User,
+    currentUser: NeoUser,
     genreToUnfollow: Genre,
   ): Promise<Genre> {
     const currentUserId = currentUser.id;
@@ -119,7 +130,7 @@ export class UsersNeoService implements IUsersNeoService {
   }
 
   async unattendEvent(
-    currentUser: User,
+    currentUser: NeoUser,
     eventToUnattend: Event,
   ): Promise<Event> {
     const currentUserId = currentUser.id;
@@ -132,25 +143,25 @@ export class UsersNeoService implements IUsersNeoService {
     );
   }
 
-  async findUserWithFollowing(user: User): Promise<User> {
+  async findUserWithFollowing(user: NeoUser): Promise<NeoUser> {
     const { id } = user;
     return await this.usersNeoRepository.getRelationship(
       id,
-      User.entityName,
+      NeoUser.entityName,
       RelationshipSide.FromMe,
     );
   }
 
-  async findUserWithFollowers(user: User): Promise<User> {
+  async findUserWithFollowers(user: NeoUser): Promise<NeoUser> {
     const { id } = user;
     return await this.usersNeoRepository.getRelationship(
       id,
-      User.entityName,
+      NeoUser.entityName,
       RelationshipSide.ToMe,
     );
   }
 
-  async findUserWithFollowingGenres(user: User): Promise<User> {
+  async findUserWithFollowingGenres(user: NeoUser): Promise<NeoUser> {
     const { id } = user;
     return await this.usersNeoRepository.getRelationship(
       id,
@@ -159,7 +170,7 @@ export class UsersNeoService implements IUsersNeoService {
     );
   }
 
-  async findUserWithAttendingFutureEvents(user: User): Promise<User> {
+  async findUserWithAttendingFutureEvents(user: NeoUser): Promise<NeoUser> {
     const { id } = user;
     return await this.usersNeoRepository.getRelationshipWithQuery(
       id,
@@ -169,7 +180,9 @@ export class UsersNeoService implements IUsersNeoService {
     );
   }
 
-  async findUserWithFollowersFollowingAndGenres(query: object): Promise<User> {
+  async findUserWithFollowersFollowingAndGenres(
+    query: object,
+  ): Promise<NeoUser> {
     return await this.usersNeoRepository.findWithFollowersFollowingGenresAndEvents(
       query,
     );
@@ -205,7 +218,7 @@ export class UsersNeoService implements IUsersNeoService {
     return await this.usersNeoRepository.checkForRelationShip(id1, id2, 'Band');
   }
 
-  async findUserWithLikedBands(user: User): Promise<User> {
+  async findUserWithLikedBands(user: NeoUser): Promise<NeoUser> {
     const { id } = user;
     return await this.usersNeoRepository.getRelationship(
       id,
@@ -214,7 +227,7 @@ export class UsersNeoService implements IUsersNeoService {
     );
   }
 
-  async findUserWithHisBand(user: User): Promise<User> {
+  async findUserWithHisBand(user: NeoUser): Promise<NeoUser> {
     const { id } = user;
     return await this.usersNeoRepository.getRelationship(
       id,
@@ -223,7 +236,7 @@ export class UsersNeoService implements IUsersNeoService {
     );
   }
 
-  async likeBand(currentUser: User, bandToLike: Band): Promise<Band> {
+  async likeBand(currentUser: NeoUser, bandToLike: Band): Promise<Band> {
     const currentUserId = currentUser.id;
     const bandToLikeId = bandToLike.id;
 
@@ -234,7 +247,7 @@ export class UsersNeoService implements IUsersNeoService {
     );
   }
 
-  async unlikeBand(currentUser: User, bandToUnlike: Band): Promise<Band> {
+  async unlikeBand(currentUser: NeoUser, bandToUnlike: Band): Promise<Band> {
     const currentUserId = currentUser.id;
     const bandToUnlikeId = bandToUnlike.id;
 
@@ -249,7 +262,7 @@ export class UsersNeoService implements IUsersNeoService {
     genreId: number,
     userId: number,
     limit: number = 5,
-  ): Promise<User[]> {
+  ): Promise<NeoUser[]> {
     return await this.usersNeoRepository.findSuggestedUsersByGenre(
       genreId,
       userId,
@@ -261,7 +274,7 @@ export class UsersNeoService implements IUsersNeoService {
     bandId: number,
     userId: number,
     limit: number = 5,
-  ): Promise<User[]> {
+  ): Promise<NeoUser[]> {
     return await this.usersNeoRepository.findSuggestedUsersByBand(
       bandId,
       userId,

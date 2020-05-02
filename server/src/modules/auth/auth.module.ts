@@ -5,7 +5,7 @@ import { ConfigModule } from '../config/config.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { PasswordRecovery } from './entity/password-recovery.entity';
+import { PasswordRecovery } from './entity/password-recovery.sql.entity';
 
 @Module({
   imports: [

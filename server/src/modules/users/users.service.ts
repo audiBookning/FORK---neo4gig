@@ -11,16 +11,16 @@ import { IGenresNeoService } from '../genres/interfaces/genres-service.neo.inter
 import { CreateUserDto } from './dto/createUser.dto';
 import { CreateUserNeoDto } from './dto/createUser.neo.dto';
 import { CreateUserPgDto } from './dto/createUser.pg.dto';
-import { User } from './entity/user.entity';
-import { User as NeoUser } from './entity/user.neo.entity';
+import { NeoUser } from './entity/user.neo.entity';
+import { SqlUser } from './entity/user.sql.entity';
 import { IUsersService } from './interfaces/users-service.interface';
 import { IUsersNeoService } from './interfaces/users-service.neo.interface';
 
 @Injectable()
 export class UsersService implements IUsersService {
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    @InjectRepository(SqlUser)
+    private readonly usersRepository: Repository<SqlUser>,
     @Inject('UsersNeoService')
     private readonly usersNeoService: IUsersNeoService,
     @Inject('EventsNeoService')
@@ -31,20 +31,20 @@ export class UsersService implements IUsersService {
     private readonly bandsNeoService: IBandsNeoService,
   ) {}
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<SqlUser[]> {
     return await this.usersRepository.find();
   }
 
-  async findById(id: string): Promise<User> {
+  async findById(id: string): Promise<SqlUser> {
     return await this.usersRepository.findOne(id);
   }
 
-  async findOne(query: object): Promise<User> {
+  async findOne(query: object): Promise<SqlUser> {
     return await this.usersRepository.findOne(query);
   }
 
   async getUserFeed(id: string): Promise<any> {
-    const user: User = await this.findById(id);
+    const user: SqlUser = await this.findById(id);
     const { email } = user;
     const neoUser: NeoUser = await this.usersNeoService.findUserWithFollowersFollowingAndGenres(
       { email },
@@ -120,17 +120,17 @@ export class UsersService implements IUsersService {
       : await this.usersNeoService.likeBand(user, band);
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<SqlUser> {
     const {
       createNeoUserDto,
       createUserPgDto,
     } = UsersService.getPgAndNeoUserDtos(createUserDto);
 
     await this.usersNeoService.create(createNeoUserDto);
-    return await this.usersRepository.save(new User(createUserPgDto));
+    return await this.usersRepository.save(new SqlUser(createUserPgDto));
   }
 
-  async update(id: string, newValue: CreateUserPgDto): Promise<User | null> {
+  async update(id: string, newValue: CreateUserPgDto): Promise<SqlUser | null> {
     let user = await this.usersRepository.findOne(id);
 
     if (!user.id) {
@@ -146,7 +146,7 @@ export class UsersService implements IUsersService {
     return await this.usersRepository.delete(id);
   }
 
-  private _assign(user: User, newValue: CreateUserPgDto) {
+  private _assign(user: SqlUser, newValue: CreateUserPgDto) {
     for (const key of Object.keys(newValue)) {
       if (user[key] !== newValue[key]) {
         //

@@ -4,31 +4,27 @@ import { Band } from '../../bands/entity/band.neo.entity';
 import { Event } from '../../events/entity/event.neo.entity';
 import { Genre } from '../../genres/entity/genre.neo.entity';
 import { Neo4jService } from '../../neo4j/neo4j.service';
-import { User } from '../entity/user.neo.entity';
+import { NeoUser } from '../entity/user.neo.entity';
 
 export class UsersNeoRepository extends AbstractNeoRepository {
   constructor(neo4jService: Neo4jService) {
-    super(User, neo4jService);
+    super(NeoUser, neo4jService);
   }
 
   async findSuggestedUsersByGenre(
     genreId: number,
     userId: number,
     limit: number = 5,
-  ): Promise<User[]> {
+  ): Promise<NeoUser[]> {
     const { relationShipName } = Genre.associate(
-      `${User.entityName}${RelationshipSide.ToMe}`,
+      `${NeoUser.entityName}${RelationshipSide.ToMe}`,
     );
-    const userRelation = User.associate(
-      `${User.entityName}${RelationshipSide.FromMe}`,
+    const userRelation = NeoUser.associate(
+      `${NeoUser.entityName}${RelationshipSide.FromMe}`,
     );
     const records = await this.neo4jService.query(
-      `MATCH (g:${Genre.entityName})<-[r: ${relationShipName}]-(u:${
-        User.entityName
-      }), (m:${User.entityName}) ` +
-        `WHERE id(g) = ${genreId} AND id(u) <> ${userId} AND id(m) = ${userId} AND NOT (u)<-[:${
-          userRelation.relationShipName
-        }]-(m)` +
+      `MATCH (g:${Genre.entityName})<-[r: ${relationShipName}]-(u:${NeoUser.entityName}), (m:${NeoUser.entityName}) ` +
+        `WHERE id(g) = ${genreId} AND id(u) <> ${userId} AND id(m) = ${userId} AND NOT (u)<-[:${userRelation.relationShipName}]-(m)` +
         `RETURN u, rand() as r ` +
         `ORDER BY r ` +
         `LIMIT ${limit}`,
@@ -41,29 +37,23 @@ export class UsersNeoRepository extends AbstractNeoRepository {
     bandId: number,
     userId: number,
     limit: number = 5,
-  ): Promise<User[]> {
+  ): Promise<NeoUser[]> {
     const { relationShipName } = Band.associate(
-      `${User.entityName}${RelationshipSide.ToMe}`,
+      `${NeoUser.entityName}${RelationshipSide.ToMe}`,
     );
-    const userRelation = User.associate(
-      `${User.entityName}${RelationshipSide.FromMe}`,
+    const userRelation = NeoUser.associate(
+      `${NeoUser.entityName}${RelationshipSide.FromMe}`,
     );
     const records = await this.neo4jService.query(
-      `MATCH (b:${Band.entityName})<-[r:${relationShipName}]-(u:${
-        User.entityName
-      }), (m:${User.entityName}) ` +
-        `WHERE id(b) = ${bandId} AND id(u) <> ${userId} AND id(m) = ${userId} AND NOT (u)<-[:${
-          userRelation.relationShipName
-        }]-(m) ` +
+      `MATCH (b:${Band.entityName})<-[r:${relationShipName}]-(u:${NeoUser.entityName}), (m:${NeoUser.entityName}) ` +
+        `WHERE id(b) = ${bandId} AND id(u) <> ${userId} AND id(m) = ${userId} AND NOT (u)<-[:${userRelation.relationShipName}]-(m) ` +
         `RETURN u, rand() as r ` +
         `ORDER BY r ` +
         `LIMIT ${limit}`,
     );
 
     console.log(
-      `MATCH (b:${Band.entityName})<-[r:${relationShipName}]-(u:${
-        User.entityName
-      }), (u)-[rr:${userRelation.relationShipName}]->(m:${User.entityName}) ` +
+      `MATCH (b:${Band.entityName})<-[r:${relationShipName}]-(u:${NeoUser.entityName}), (u)-[rr:${userRelation.relationShipName}]->(m:${NeoUser.entityName}) ` +
         `WHERE id(b) = ${bandId} AND id(u) <> ${userId} AND id(m) = ${userId} AND rr IS NULL ` +
         `RETURN u, rand() as r ` +
         `ORDER BY r ` +
@@ -81,33 +71,25 @@ export class UsersNeoRepository extends AbstractNeoRepository {
       return null;
     }
 
-    const relFollowing = User.associate(
-      `${User.entityName}${RelationshipSide.FromMe}`,
+    const relFollowing = NeoUser.associate(
+      `${NeoUser.entityName}${RelationshipSide.FromMe}`,
     );
-    const relFollowers = User.associate(
-      `${User.entityName}${RelationshipSide.ToMe}`,
+    const relFollowers = NeoUser.associate(
+      `${NeoUser.entityName}${RelationshipSide.ToMe}`,
     );
-    const relEvents = User.associate(
+    const relEvents = NeoUser.associate(
       `${Event.entityName}${RelationshipSide.FromMe}`,
     );
-    const relGenres = User.associate(
+    const relGenres = NeoUser.associate(
       `${Genre.entityName}${RelationshipSide.FromMe}`,
     );
 
     const records = await this.neo4jService.query(
-      `MATCH (n:${User.entityName})-[r:${
-        relFollowing.relationShipName
-      }]->(following:User), ` +
-        `(n)<-[rr:${relFollowers.relationShipName}]-(follower:${
-          User.entityName
-        }), ` +
-        `(n)-[ra:${relEvents.relationShipName}]->(event:${
-          Event.entityName
-        }), ` +
+      `MATCH (n:${NeoUser.entityName})-[r:${relFollowing.relationShipName}]->(following:User), ` +
+        `(n)<-[rr:${relFollowers.relationShipName}]-(follower:${NeoUser.entityName}), ` +
+        `(n)-[ra:${relEvents.relationShipName}]->(event:${Event.entityName}), ` +
         `(n)-[rb:${relGenres.relationShipName}]->(genre:${Genre.entityName}) ` +
-        `WHERE id(n) = ${
-          user['id']
-        } RETURN n, following, follower, event, genre`,
+        `WHERE id(n) = ${user['id']} RETURN n, following, follower, event, genre`,
     );
 
     const followings = {};

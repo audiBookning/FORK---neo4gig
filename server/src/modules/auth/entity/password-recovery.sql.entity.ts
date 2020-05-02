@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../users/entity/user.entity';
+import { SqlUser } from '../../users/entity/user.sql.entity';
 
 @Entity({
   name: 'passwordRecoveries',
@@ -22,10 +22,10 @@ export class PasswordRecovery {
   token: string;
 
   @ManyToOne(
-    type => User,
+    type => SqlUser,
     user => user.passwordRecoveries,
   )
-  user: User;
+  user: SqlUser;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

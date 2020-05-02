@@ -4,13 +4,13 @@ import { Event } from '../../events/entity/event.neo.entity';
 import { Genre } from '../../genres/entity/genre.neo.entity';
 import { CreateUserNeoDto } from '../dto/createUser.neo.dto';
 
-export class User extends AbstractNeoEntity {
+export class NeoUser extends AbstractNeoEntity {
   static readonly entityName = 'User';
   static readonly relationships = {
     'User->': {
       relationShipName: 'FOLLOWS',
       property: 'following',
-      className: User,
+      className: NeoUser,
     },
     'User<-': {
       relationShipName: 'FOLLOWS',
@@ -29,7 +29,7 @@ export class User extends AbstractNeoEntity {
     'Band->': {
       relationShipName: 'LIKES',
       property: 'likedBands',
-      className: User,
+      className: NeoUser,
     },
     'Band<-': {
       relationShipName: 'HAS_MEMBER',
@@ -66,9 +66,9 @@ export class User extends AbstractNeoEntity {
 
   isMusician: string;
 
-  following: User[];
+  following: NeoUser[];
 
-  followers: User[];
+  followers: NeoUser[];
 
   genres: Genre[];
 
@@ -79,10 +79,10 @@ export class User extends AbstractNeoEntity {
   band: Band;
 
   static associate(entityName): { relationShipName; property; className? } {
-    if (User.relationships === null) {
+    if (NeoUser.relationships === null) {
       return null;
     }
 
-    return User.relationships[entityName];
+    return NeoUser.relationships[entityName];
   }
 }

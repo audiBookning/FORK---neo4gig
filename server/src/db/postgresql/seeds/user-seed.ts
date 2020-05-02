@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import * as crypto from 'crypto';
 import * as faker from 'faker';
 import { v4 as uuid } from 'uuid';
-import { User } from '../../../modules/users/entity/user.entity';
+import { SqlUser } from '../../../modules/users/entity/user.sql.entity';
 import { Status } from '../../../modules/users/enum/status.enum';
 
 export class UserSeed {
@@ -11,7 +11,7 @@ export class UserSeed {
     const insertData = [];
 
     for (let i = 0; i < 10; i += 1) {
-      const user = new User();
+      const user = new SqlUser();
 
       user.id = uuid();
       user.name = faker.name.findName();

@@ -1,6 +1,6 @@
 import * as stringifyObject from 'stringify-object';
 import { Neo4jService } from '../../modules/neo4j/neo4j.service';
-import { User } from '../../modules/users/entity/user.neo.entity';
+import { NeoUser } from '../../modules/users/entity/user.neo.entity';
 import { RelationshipSide } from '../enum/neo-relationship-side.enum';
 
 export abstract class AbstractNeoRepository {
@@ -70,21 +70,19 @@ export abstract class AbstractNeoRepository {
 
   public async findAllWithUsers(): Promise<object[]> {
     const relship = this.classEntity.associate(
-      `${User.entityName}${RelationshipSide.ToMe}`,
+      `${NeoUser.entityName}${RelationshipSide.ToMe}`,
     );
     const { relationShipName, property } = relship;
 
     const result = await this.neo4jService.query(
       `MATCH (n:${this.className}) OPTIONAL MATCH (n)${RelationshipSide.ToMe}` +
-        `[r:${relationShipName}]${RelationshipSide.Neutral}(m:${
-          User.entityName
-        }) RETURN n, m`,
+        `[r:${relationShipName}]${RelationshipSide.Neutral}(m:${NeoUser.entityName}) RETURN n, m`,
     );
 
     const objects: any = {};
     for (const record of result) {
       const obj = this.createObjectFromData(record.get('n'));
-      const user = this.createObjectFromData(record.get('m'), User);
+      const user = this.createObjectFromData(record.get('m'), NeoUser);
       if (objects[obj.id] === undefined) {
         objects[obj.id] = obj;
         objects[obj.id][property] = [];
@@ -127,9 +125,7 @@ export abstract class AbstractNeoRepository {
     const instance = new this.classEntity(object);
     const setProps = this.convertPropsToString(object);
     const result = await this.neo4jService.query(
-      `MERGE (n:${this.className} {id: ${
-        instance.id
-      }}) ON MATCH SET ${setProps} RETURN n`,
+      `MERGE (n:${this.className} {id: ${instance.id}}) ON MATCH SET ${setProps} RETURN n`,
     );
 
     return this.createObjectFromRecord(result);

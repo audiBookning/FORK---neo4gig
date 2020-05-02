@@ -5,16 +5,16 @@ import { CreateEventNeoDto } from '../../events/dto/createEvent.neo.dto';
 import { Event } from '../../events/entity/event.neo.entity';
 import { Genre } from '../../genres/entity/genre.neo.entity';
 import { CreateUserPgDto } from '../dto/createUser.pg.dto';
-import { User } from '../entity/user.entity';
-import { User as NeoUser } from '../entity/user.neo.entity';
+import { NeoUser } from '../entity/user.neo.entity';
+import { SqlUser } from '../entity/user.sql.entity';
 
 export interface IUsersService {
-  findAll(): Promise<User[]>;
-  findById(id: string): Promise<User>;
-  findOne(query: object): Promise<User>;
-  getUserFeed(id: string): Promise<User>;
-  create(createUserDto: CreateUserPgDto): Promise<User>;
-  update(id: string, newValue: CreateUserPgDto): Promise<User | null>;
+  findAll(): Promise<SqlUser[]>;
+  findById(id: string): Promise<SqlUser>;
+  findOne(query: object): Promise<SqlUser>;
+  getUserFeed(id: string): Promise<SqlUser>;
+  create(createUserDto: CreateUserPgDto): Promise<SqlUser>;
+  update(id: string, newValue: CreateUserPgDto): Promise<SqlUser | null>;
   delete(id: string): Promise<DeleteResult>;
   updateFollow(ids: any): Promise<NeoUser | HttpException>;
   updateInterest(ids: any): Promise<Genre | HttpException>;

@@ -1,5 +1,5 @@
 import { AbstractNeoEntity } from '../../../common/entity/abstract-neo-entity.';
-import { User } from '../../users/entity/user.neo.entity';
+import { NeoUser } from '../../users/entity/user.neo.entity';
 import { CreateBandNeoDto } from '../dto/createBand.neo.dto';
 
 export class Band extends AbstractNeoEntity {
@@ -12,7 +12,7 @@ export class Band extends AbstractNeoEntity {
     'User<-': {
       relationShipName: 'LIKES',
       property: 'likes',
-      className: User,
+      className: NeoUser,
     },
   };
 
@@ -33,9 +33,9 @@ export class Band extends AbstractNeoEntity {
 
   description: string;
 
-  members: User[];
+  members: NeoUser[];
 
-  likes: User[];
+  likes: NeoUser[];
 
   static associate(entityName): { relationShipName; property; className? } {
     if (Band.relationships === null) {

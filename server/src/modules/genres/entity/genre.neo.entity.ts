@@ -1,5 +1,5 @@
 import { AbstractNeoEntity } from '../../../common/entity/abstract-neo-entity.';
-import { User } from '../../users/entity/user.neo.entity';
+import { NeoUser } from '../../users/entity/user.neo.entity';
 import { CreateGenreNeoDto } from '../dto/createGenre.neo.dto';
 
 export class Genre extends AbstractNeoEntity {
@@ -8,7 +8,7 @@ export class Genre extends AbstractNeoEntity {
     'User<-': {
       relationShipName: 'INTERESTED_INTO',
       property: 'userFollowers',
-      className: User,
+      className: NeoUser,
     },
     'Event<-': {
       relationShipName: 'BELONGS_TO',
@@ -33,7 +33,7 @@ export class Genre extends AbstractNeoEntity {
 
   description: string;
 
-  userFollowers: User[];
+  userFollowers: NeoUser[];
 
   events: Event[];
 

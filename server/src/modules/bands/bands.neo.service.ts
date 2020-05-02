@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { User } from '../users/entity/user.neo.entity';
+import { NeoUser } from '../users/entity/user.neo.entity';
 import { CreateBandNeoDto } from './dto/createBand.neo.dto';
 import { Band } from './entity/band.neo.entity';
 import { IBandsNeoService } from './interfaces/bands-service.neo.interface';
@@ -38,14 +38,14 @@ export class BandsNeoService implements IBandsNeoService {
     return await this.bandsNeoRepository.update({ ...newValue, id });
   }
 
-  async addMember(band: Band, userToAdd: User): Promise<User> {
+  async addMember(band: Band, userToAdd: NeoUser): Promise<NeoUser> {
     const bandId = band.id;
     const userToAddId = userToAdd.id;
 
     return await this.bandsNeoRepository.createRelationship(
       bandId,
       userToAddId,
-      User.entityName,
+      NeoUser.entityName,
     );
   }
 }

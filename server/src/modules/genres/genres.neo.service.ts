@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { QueryWith } from '../../common/entity/neo-query-with';
 import { RelationshipSide } from '../../common/enum/neo-relationship-side.enum';
 import { Event } from '../events/entity/event.neo.entity';
-import { User } from '../users/entity/user.neo.entity';
+import { NeoUser } from '../users/entity/user.neo.entity';
 import { CreateGenreNeoDto } from './dto/createGenre.neo.dto';
 import { Genre } from './entity/genre.neo.entity';
 import { IGenresNeoService } from './interfaces/genres-service.neo.interface';
@@ -70,7 +70,7 @@ export class GenresNeoService implements IGenresNeoService {
     const { id } = genre;
     return await this.genresNeoRepository.getRelationship(
       id,
-      User.entityName,
+      NeoUser.entityName,
       RelationshipSide.ToMe,
     );
   }

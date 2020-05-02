@@ -7,14 +7,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PasswordRecovery } from '../../auth/entity/password-recovery.entity';
+import { PasswordRecovery } from '../../auth/entity/password-recovery.sql.entity';
 import { CreateUserPgDto } from '../dto/createUser.pg.dto';
 import { Status } from '../enum/status.enum';
 
 @Entity({
   name: 'users',
 })
-export class User {
+export class SqlUser {
   constructor();
   constructor(user: CreateUserPgDto);
   constructor(user?: any) {
